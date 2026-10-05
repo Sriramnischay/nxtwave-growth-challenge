@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Attempt creation
-    const result = db.createStudent({
+    const result = await db.createStudent({
       name,
       email,
       college,

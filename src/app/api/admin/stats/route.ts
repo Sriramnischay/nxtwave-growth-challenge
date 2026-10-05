@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 
 export async function GET(req: NextRequest) {
   try {
-    const stats = db.getAdminStats();
+    const stats = await db.getAdminStats();
     return NextResponse.json({
       success: true,
       stats,
@@ -22,12 +22,12 @@ export async function POST(req: NextRequest) {
     const { action } = body;
 
     if (action === 'reset') {
-      db.resetDatabase();
+      await db.resetDatabase();
       return NextResponse.json({ success: true, message: 'Database reset to benchmark simulation seed dataset successfully.' });
     }
 
     if (action === 'clear') {
-      db.clearDatabase();
+      await db.clearDatabase();
       return NextResponse.json({ success: true, message: 'All registration data cleared.' });
     }
 

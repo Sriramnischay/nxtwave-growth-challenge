@@ -1,9 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import { Redis } from '@upstash/redis';
 import { Student, Referral, AdminStats, LeaderboardEntry, DailyTrend, CollegeStat, BranchStat } from '../types';
-
-const DATA_DIR = path.join(process.cwd(), 'data');
-const DB_FILE = path.join(DATA_DIR, 'db.json');
 
 interface DatabaseSchema {
   students: Student[];
@@ -14,6 +12,37 @@ interface DatabaseSchema {
     campaignStartDate: string;
     campaignEndDate: string;
   };
+}
+
+const REDIS_KEY = 'nxtwave:database:state';
+
+// Detect if Upstash Redis or Vercel KV credentials exist
+function getRedisClient(): Redis | null {
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+
+  if (url && token) {
+    try {
+      return new Redis({ url, token });
+    } catch (e) {
+      console.error('Failed to initialize Upstash Redis client:', e);
+      return null;
+    }
+  }
+  return null;
+}
+
+// Determine safe local/ephemeral file path depending on runtime environment
+function getLocalDbFilePath(): string {
+  const isVercelServerless = !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+  
+  if (isVercelServerless) {
+    // AWS Lambda / Vercel Serverless gives writable storage under /tmp
+    return path.join('/tmp', 'nxtwave_db.json');
+  }
+
+  // Local development
+  return path.join(process.cwd(), 'data', 'db.json');
 }
 
 // Generate unique 5-char alphanumeric code: NXT-XXXXX
@@ -170,86 +199,150 @@ function generateSeedData(): DatabaseSchema {
   };
 }
 
-function ensureDbExists(): DatabaseSchema {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+// Read database state from Cloud Redis or Local/Ephemeral File
+async function loadDb(): Promise<DatabaseSchema> {
+  const redis = getRedisClient();
+
+  if (redis) {
+    try {
+      const data = await redis.get<DatabaseSchema>(REDIS_KEY);
+      if (data && data.students && data.referrals) {
+        return data;
+      }
+      // If redis is empty, seed it
+      const seed = generateSeedData();
+      await redis.set(REDIS_KEY, seed);
+      return seed;
+    } catch (err) {
+      console.error('Error fetching from Upstash Redis, falling back to local storage:', err);
+    }
   }
 
-  if (!fs.existsSync(DB_FILE)) {
-    const seedData = generateSeedData();
-    fs.writeFileSync(DB_FILE, JSON.stringify(seedData, null, 2), 'utf-8');
-    return seedData;
+  // Local / Fallback File Handling
+  const filePath = getLocalDbFilePath();
+  const dir = path.dirname(filePath);
+
+  if (!fs.existsSync(dir)) {
+    try {
+      fs.mkdirSync(dir, { recursive: true });
+    } catch {
+      // ignore
+    }
+  }
+
+  if (fs.existsSync(filePath)) {
+    try {
+      const raw = fs.readFileSync(filePath, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (parsed.students && parsed.referrals) {
+        return parsed;
+      }
+    } catch {
+      // ignore and reseed
+    }
+  }
+
+  // Check if bundled data/db.json exists to read initial state without write
+  const bundledPath = path.join(process.cwd(), 'data', 'db.json');
+  if (bundledPath !== filePath && fs.existsSync(bundledPath)) {
+    try {
+      const raw = fs.readFileSync(bundledPath, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (parsed.students && parsed.referrals) {
+        // write to writable path if possible
+        try {
+          fs.writeFileSync(filePath, JSON.stringify(parsed, null, 2), 'utf-8');
+        } catch {}
+        return parsed;
+      }
+    } catch {}
+  }
+
+  const seedData = generateSeedData();
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(seedData, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn('Could not write to local file path:', filePath, err);
+  }
+  return seedData;
+}
+
+// Save database state to Cloud Redis or Local/Ephemeral File
+async function persistDb(data: DatabaseSchema): Promise<void> {
+  const redis = getRedisClient();
+
+  if (redis) {
+    try {
+      await redis.set(REDIS_KEY, data);
+      return;
+    } catch (err) {
+      console.error('Error persisting to Upstash Redis:', err);
+    }
+  }
+
+  // Local / Fallback File Handling
+  const filePath = getLocalDbFilePath();
+  const dir = path.dirname(filePath);
+
+  if (!fs.existsSync(dir)) {
+    try {
+      fs.mkdirSync(dir, { recursive: true });
+    } catch {}
   }
 
   try {
-    const content = fs.readFileSync(DB_FILE, 'utf-8');
-    const parsed = JSON.parse(content);
-    if (!parsed.students || !parsed.referrals) {
-      const seedData = generateSeedData();
-      fs.writeFileSync(DB_FILE, JSON.stringify(seedData, null, 2), 'utf-8');
-      return seedData;
-    }
-    return parsed;
-  } catch {
-    const seedData = generateSeedData();
-    fs.writeFileSync(DB_FILE, JSON.stringify(seedData, null, 2), 'utf-8');
-    return seedData;
+    const tempFile = `${filePath}.tmp.${Date.now()}`;
+    fs.writeFileSync(tempFile, JSON.stringify(data, null, 2), 'utf-8');
+    fs.renameSync(tempFile, filePath);
+  } catch (err) {
+    console.error('Failed to persist database to filesystem:', filePath, err);
   }
 }
 
-function saveDb(data: DatabaseSchema): void {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  const tempFile = `${DB_FILE}.tmp.${Date.now()}`;
-  fs.writeFileSync(tempFile, JSON.stringify(data, null, 2), 'utf-8');
-  fs.renameSync(tempFile, DB_FILE);
-}
-
-// Public Database API
+// Public Unified Database API
 export const db = {
-  getStudents(): Student[] {
-    const data = ensureDbExists();
+  async getStudents(): Promise<Student[]> {
+    const data = await loadDb();
     return data.students;
   },
 
-  getStudentByEmail(email: string): Student | undefined {
-    const data = ensureDbExists();
+  async getStudentByEmail(email: string): Promise<Student | undefined> {
+    const data = await loadDb();
     const cleanEmail = email.trim().toLowerCase();
     return data.students.find(s => s.email.toLowerCase() === cleanEmail);
   },
 
-  getStudentByReferralCode(code: string): Student | undefined {
-    const data = ensureDbExists();
+  async getStudentByReferralCode(code: string): Promise<Student | undefined> {
+    const data = await loadDb();
     const cleanCode = code.trim().toUpperCase();
     return data.students.find(s => s.referralCode.toUpperCase() === cleanCode);
   },
 
-  getStudentById(id: string): Student | undefined {
-    const data = ensureDbExists();
+  async getStudentById(id: string): Promise<Student | undefined> {
+    const data = await loadDb();
     return data.students.find(s => s.id === id);
   },
 
-  getReferralsByReferrerId(referrerId: string): Referral[] {
-    const data = ensureDbExists();
+  async getReferralsByReferrerId(referrerId: string): Promise<Referral[]> {
+    const data = await loadDb();
     return data.referrals.filter(r => r.referrerId === referrerId);
   },
 
-  getReferralsByReferrerCode(code: string): Referral[] {
-    const data = ensureDbExists();
+  async getReferralsByReferrerCode(code: string): Promise<Referral[]> {
+    const data = await loadDb();
     const cleanCode = code.trim().toUpperCase();
     return data.referrals.filter(r => r.referrerCode.toUpperCase() === cleanCode);
   },
 
-  createStudent(studentData: {
+  async createStudent(studentData: {
     name: string;
     email: string;
     college: string;
     branch: string;
     graduationYear: string;
     referralCodeInput?: string | null;
-  }): { student: Student; referrerAttributed?: Student; warning?: string } {
-    const data = ensureDbExists();
+  }): Promise<{ student: Student; referrerAttributed?: Student; warning?: string }> {
+    const data = await loadDb();
     const cleanEmail = studentData.email.trim().toLowerCase();
 
     // Check duplicate email
@@ -312,7 +405,7 @@ export const db = {
       data.referrals.unshift(newReferral);
     }
 
-    saveDb(data);
+    await persistDb(data);
 
     return {
       student: newStudent,
@@ -321,8 +414,8 @@ export const db = {
     };
   },
 
-  getLeaderboard(limit = 50, currentUserIdOrCode?: string): { leaderboard: LeaderboardEntry[]; userRank?: number } {
-    const data = ensureDbExists();
+  async getLeaderboard(limit = 50, currentUserIdOrCode?: string): Promise<{ leaderboard: LeaderboardEntry[]; userRank?: number }> {
+    const data = await loadDb();
 
     // Sort students by referralCount descending, then by createdAt ascending
     const sorted = [...data.students]
@@ -358,8 +451,8 @@ export const db = {
     return { leaderboard, userRank };
   },
 
-  getAdminStats(): AdminStats {
-    const data = ensureDbExists();
+  async getAdminStats(): Promise<AdminStats> {
+    const data = await loadDb();
     const students = data.students;
     const referrals = data.referrals;
     const target = data.config.targetRegistrations || 500;
@@ -458,7 +551,7 @@ export const db = {
       .sort((a, b) => b.count - a.count);
 
     // Top 10 referrers
-    const topReferrers = this.getLeaderboard(10).leaderboard;
+    const { leaderboard: topReferrers } = await this.getLeaderboard(10);
 
     // Recent 10 registrations
     const recentRegistrations = students.slice(0, 10).map(s => ({
@@ -495,12 +588,12 @@ export const db = {
     };
   },
 
-  resetDatabase(): void {
+  async resetDatabase(): Promise<void> {
     const seed = generateSeedData();
-    saveDb(seed);
+    await persistDb(seed);
   },
 
-  clearDatabase(): void {
+  async clearDatabase(): Promise<void> {
     const empty: DatabaseSchema = {
       students: [],
       referrals: [],
@@ -511,6 +604,6 @@ export const db = {
         campaignEndDate: new Date(Date.now() + 7 * 86400000).toISOString(),
       }
     };
-    saveDb(empty);
+    await persistDb(empty);
   }
 };

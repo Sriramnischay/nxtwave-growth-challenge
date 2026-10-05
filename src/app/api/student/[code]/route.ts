@@ -12,7 +12,10 @@ export async function GET(
       return NextResponse.json({ success: false, error: 'Student code is required' }, { status: 400 });
     }
 
-    const student = db.getStudentByReferralCode(rawCode) || db.getStudentById(rawCode) || db.getStudentByEmail(rawCode);
+    // Sequential async lookups — cannot use || with Promises
+    let student = await db.getStudentByReferralCode(rawCode);
+    if (!student) student = await db.getStudentById(rawCode);
+    if (!student) student = await db.getStudentByEmail(rawCode);
 
     if (!student) {
       return NextResponse.json({
@@ -22,15 +25,15 @@ export async function GET(
     }
 
     // Get referrals made by this student
-    const referrals = db.getReferralsByReferrerId(student.id);
+    const referrals = await db.getReferralsByReferrerId(student.id);
 
     // Get leaderboard rank
-    const { leaderboard, userRank } = db.getLeaderboard(100, student.referralCode);
+    const { leaderboard, userRank } = await db.getLeaderboard(100, student.referralCode);
 
     // Calculate milestones
     const milestones = MILESTONES.map(m => ({
       ...m,
-      unlocked: (student.referralCount || 0) >= m.referralsRequired,
+      unlocked: (student!.referralCount || 0) >= m.referralsRequired,
     }));
 
     // Find next milestone
@@ -38,6 +41,8 @@ export async function GET(
     const progressToNext = nextMilestone
       ? Math.min(100, Math.round(((student.referralCount || 0) / nextMilestone.referralsRequired) * 100))
       : 100;
+
+    const totalParticipants = (await db.getStudents()).length;
 
     return NextResponse.json({
       success: true,
@@ -63,7 +68,7 @@ export async function GET(
       milestones,
       nextMilestone,
       progressToNext,
-      totalParticipants: db.getStudents().length,
+      totalParticipants,
     });
   } catch (err: any) {
     return NextResponse.json({

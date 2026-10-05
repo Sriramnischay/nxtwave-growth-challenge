@@ -8,9 +8,10 @@ export async function GET(req: NextRequest) {
     const userCode = searchParams.get('userCode') || undefined;
 
     const limit = limitParam ? Math.min(100, parseInt(limitParam, 10)) : 50;
-    const { leaderboard, userRank } = db.getLeaderboard(limit, userCode);
-    const totalStudents = db.getStudents().length;
-    const totalReferrals = db.getStudents().reduce((acc, s) => acc + (s.referralCount || 0), 0);
+    const { leaderboard, userRank } = await db.getLeaderboard(limit, userCode);
+    const students = await db.getStudents();
+    const totalStudents = students.length;
+    const totalReferrals = students.reduce((acc, s) => acc + (s.referralCount || 0), 0);
 
     return NextResponse.json({
       success: true,
