@@ -1,312 +1,319 @@
-# NxtWave Growth Intern – Student Referral & Registration Platform
+<div align="center">
 
-An end-to-end web application and viral referral platform built for the **NxtWave Growth Intern Challenge**.
+# 🚀 NxtWave Growth Challenge
+### Student Referral & Workshop Registration Platform
 
----
+**Built for the NxtWave Growth Intern Challenge**
 
-## 1. Project Overview
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-06B6D4?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
+[![Vercel](https://img.shields.io/badge/Deployed-Vercel-black?style=for-the-badge&logo=vercel)](https://nxtwave-growth-challenge-amber.vercel.app/)
 
-This platform is a functional simulation and prototype designed to drive registrations for NxtWave's free live workshop:
+<br/>
 
-> **“Build Your First AI Project in 60 Minutes”**
+**[🌐 Live Demo](https://nxtwave-growth-challenge-amber.vercel.app/) · [📋 Register](https://nxtwave-growth-challenge-amber.vercel.app/register) · [🏆 Leaderboard](https://nxtwave-growth-challenge-amber.vercel.app/leaderboard) · [📊 Admin](https://nxtwave-growth-challenge-amber.vercel.app/admin)**
 
-Instead of relying on expensive paid advertising, the platform leverages an **organic student-to-student referral loop**. When a final-year engineering student registers, they receive a personal referral link, 1-click WhatsApp sharing tools, progress-based milestone perks, and live rankings on the campus leaderboard.
-
----
-
-## 2. Challenge Objective
-
-- **Target:** Acquire **500 final-year engineering students** (Batches 2025 & 2026) to register within **7 days**.
-- **Budget:** **₹2,000 total**.
-- **The Problem:** Standard paid ad campaigns (Meta / Google Ads) typically cost ~₹140 per qualified engineering student lead (totaling ₹70,000 for 500 students).
-- **The Solution:** Allocate the ₹2,000 budget into tangible milestone incentives and build a frictionless peer referral engine where each registered student invites 2–3 college batchmates.
+</div>
 
 ---
 
-## 3. Live Demo & Key URLs
+## 📌 What Is This?
 
-When running locally (`http://localhost:3000`):
+This is a **full-stack viral referral platform** built to solve a real growth challenge:
 
-| Page / Section | Route | Description |
-| :--- | :--- | :--- |
-| **Workshop Landing Page** | `/` | Masterclass pitch, 60-min syllabus roadmap, placement comparison, FAQ, and registration form |
-| **Dedicated Referral Registration** | `/register?ref=NXT-10012` | Pre-attributable registration page with inviter banner |
-| **Student Referral Dashboard** | `/dashboard/NXT-10012` | Referral identity, 1-click WhatsApp sharing, milestone perks, and referred friends list |
-| **Campus Leaderboard** | `/leaderboard` | Real-time student rankings, podium cards, search by name/college, and college filter |
-| **Growth Admin Hub** | `/admin` | 500-goal progress bar, daily signup charts, CPA calculator, college breakdown, and CSV export |
+> **Get 500 final-year engineering students to register for a free AI workshop within 7 days — with only ₹2,000 budget.**
 
-> **Admin Demo Access:** Passkey: `admin` *(or click the "1-Click Demo Evaluation Unlock" button)*.
+Instead of burning money on ads (which would cost ₹70,000+ for 500 students), this platform builds a **student-to-student referral loop** — where every registered student becomes a micro-ambassador at their college.
 
 ---
 
-## 4. Quick Start / Installation
+## 🎯 The Challenge
 
-### Prerequisites
-- Node.js (v18.0 or higher)
-- npm (v9.0 or higher)
+| | |
+|---|---|
+| **Workshop** | "Build Your First AI Project in 60 Minutes" |
+| **Target** | 500 final-year engineering students (Batch 2025 & 2026) |
+| **Deadline** | 7 days |
+| **Total Budget** | ₹2,000 |
+| **Standard Ad Cost** | ₹140 per student × 500 = ₹70,000 |
+| **This Platform's CPA** | **< ₹6 per student (96% cheaper)** |
 
-### Setup & Run
+---
+
+## 🌐 Live Demo
+
+**🔗 [https://nxtwave-growth-challenge-amber.vercel.app](https://nxtwave-growth-challenge-amber.vercel.app)**
+
+| Page | URL | Access |
+|------|-----|--------|
+| 🏠 Landing Page | `/` | Public |
+| 📝 Register | `/register` | Public |
+| 👤 Student Dashboard | `/dashboard/NXT-10012` | Public |
+| 🏆 Leaderboard | `/leaderboard` | Public |
+| 📊 Admin Hub | `/admin` | Passkey: `admin` |
+
+---
+
+## 📸 Screenshots
+
+### 🏠 Workshop Landing Page
+![Workshop Landing Page](screenshots/landing-page.png)
+
+### 📝 Registration with Referral Attribution
+![Registration Page](screenshots/registration.png)
+
+### 👤 Student Referral Dashboard
+![Student Dashboard](screenshots/student-dashboard.png)
+
+### 🏆 Campus Leaderboard
+![Campus Leaderboard](screenshots/leaderboard.png)
+
+### 📊 Growth Admin Dashboard
+![Admin Dashboard](screenshots/admin-dashboard.png)
+
+---
+
+## ⚡ Quick Start
+
 ```bash
-# 1. Clone the repository
+# 1. Clone
 git clone https://github.com/Sriramnischay/nxtwave-growth-challenge.git
 cd nxtwave-growth-challenge
 
-# 2. Install dependencies
+# 2. Install
 npm install
 
-# 3. Build and run production server
+# 3. Run (development)
+npm run dev
+```
+
+Open **[http://localhost:3000](http://localhost:3000)**
+
+```bash
+# Production build
 npm run build
 npm start
 
-# (Alternatively, run in development mode)
-# npm run dev
-```
-
-Open your browser at **`http://localhost:3000`**.
-
-### Running Automated Tests
-```bash
-# Run the 9-step End-to-End verification test suite
+# Run automated tests
 node scripts/test-e2e.js
 ```
 
 ---
 
-## 5. Main User Flow
+## 🔄 How the Growth Loop Works
 
 ```
-1. Workshop Discovery (Landing Page /)
-       ↓
-2. Student Registration (30-Sec Form, Batch 2025/2026)
-       ↓
-3. Unique Referral Identity Generated (e.g. NXT-A7K92)
-       ↓
-4. WhatsApp Peer Sharing (Pre-crafted Student Message)
-       ↓
-5. Friends Register via Referral URL (/register?ref=NXT-A7K92)
-       ↓
-6. Automatic Attribution & Anti-Abuse Checks
-       ↓
-7. Milestone Perks Unlocked & Campus Leaderboard Updated
+Student discovers workshop
+        ↓
+Fills 30-second registration form
+        ↓
+Gets unique referral code (e.g. NXT-A7K92)
+        ↓
+1-click WhatsApp share to college group
+        ↓
+Batchmates register via referral link
+        ↓
+Referrer unlocks milestone perks 🎁
+        ↓
+Leaderboard ranking updates live 🏆
 ```
 
-1. **Discovery:** Student discovers the workshop and understands the core value proposition: building a deployed AI Copilot on GitHub for 2025/2026 placement interviews.
-2. **Registration:** Student fills in Name, Email, College, Branch, and Graduation Year with instant field validation.
-3. **Referral Identity:** Confetti triggers on registration and provides a unique referral code (e.g., `NXT-YLCLW`) and personal link.
-4. **Peer Sharing:** Student shares to college WhatsApp study groups in 1 click with a natural, pre-filled message.
-5. **Attribution:** When friends click the link and register, the referrer's count increases automatically.
-6. **Milestone Unlocks:** As referrals grow, students unlock curated AI starter kits, VIP Discord channels, and 1-on-1 resume reviews.
+Every registered student becomes a distribution channel. One motivated student can bring in 5–10 batchmates from their college WhatsApp groups.
 
 ---
 
-## 6. Growth Strategy & Unit Economics
+## 📈 Growth Strategy
 
-### Why Peer Referrals Outperform Paid Ads
-1. **High Peer Trust:** A workshop recommendation shared inside a college WhatsApp group carries significantly higher trust and conversion than a cold social media banner.
-2. **Placement-Relevant Hook:** The workshop focuses on building a real-world GenAI project that students can discuss in campus technical interviews.
-3. **Low Acquisition Cost:** Directing the ₹2,000 budget into digital incentives rather than ad spend reduces the Cost Per Acquisition (CPA) from ~₹140 to under ₹6.
+### Why Peer Referrals Beat Paid Ads
 
-### Unit Economics Comparison
-| Metric | Traditional Paid Ads | NxtWave Peer Referral Engine |
-| :--- | :--- | :--- |
-| **Budget Required for 500 Students** | ₹70,000 (at ₹140 CPA) | **₹2,000 Total** |
-| **Effective Cost Per Registration (CPA)** | ~₹140 / student | **₹4.00 to ₹5.80 / student** |
-| **Trust Factor** | Low (Cold ad traffic) | **High (Direct classmate invite)** |
-| **Cost Savings** | Baseline (0%) | **~96% Savings** |
-| **Virality Coefficient ($K$)** | 0.0 (Pure paid) | **$K \ge 0.52$ (Organic Multiplier)** |
+| Metric | Paid Ads | This Platform |
+|--------|----------|---------------|
+| **Cost for 500 Students** | ₹70,000 | **₹2,000** |
+| **Cost Per Registration** | ~₹140 | **~₹4–6** |
+| **Trust Factor** | Low (cold ad) | **High (classmate)** |
+| **Virality K-Factor** | 0.0 | **≥ 0.52** |
+| **Savings** | Baseline | **~96% cheaper** |
 
----
+### Budget Allocation (₹2,000)
+- **₹1,200** — Digital milestone rewards (AI starter kits, templates, Discord access)
+- **₹500** — Targeted seed posts in 10 engineering college communities
+- **₹300** — WhatsApp group outreach coordination
 
-## 7. Key Features
-
-### 1. Workshop Landing Page (`/`)
-- Concise, student-focused headline and value proposition.
-- **60-Minute Practical Roadmap:**
-  - *00:00–00:15:* LLM APIs & streaming setup
-  - *00:15–00:35:* Vector embeddings & semantic retrieval (RAG)
-  - *00:35–00:50:* Fullstack interactive interface
-  - *00:50–01:00:* Cloud deployment, GitHub polish & placement portfolio
-- Placement comparison (Generic college clones vs Modern GenAI project).
-- Interactive FAQ accordion & real-time simulation progress ticker.
-
-### 2. Referral System & Anti-Abuse (`/register`)
-- Unique 5-character alphanumeric referral code generation (`NXT-XXXXX`).
-- Automatic attribution when visiting `/register?ref=CODE`.
-- **Anti-Abuse Safeguards:**
-  - Duplicate email registrations are strictly rejected.
-  - Self-referrals are prevented (cannot refer oneself).
-  - Invalid referral codes degrade gracefully to direct registration with a user notification.
-
-### 3. Student Referral Dashboard (`/dashboard/[code]`)
-- Registration confirmation badge with workshop schedule pass.
-- Personal referral code and copyable referral link with instant `"Copied!"` feedback.
-- 1-Click WhatsApp share button with a pre-drafted message:
-  > *“Hey! NxtWave is running a free 60-minute workshop where we can build our first AI project. I just registered. You can join here: [link]”*
-- **Milestone Rewards Progression:**
-  - 🚀 **1 Referral:** Curated AI Project Starter Repository + 50 Prompt Templates
-  - ⚡ **3 Referrals:** VIP Discord Channel with Mentors + AI Resume Teardown Checklist
-  - 🏆 **5 Referrals:** 1-on-1 Portfolio Feedback Session + Official Growth Ambassador Certificate
-  - 👑 **10 Referrals:** Fast-track Interview Referral for NxtWave Internships
-- Real-time activity list of referred batchmates.
-
-### 4. Campus Leaderboard (`/leaderboard`)
-- Top 3 Podium visual (Gold, Silver, Bronze badges).
-- Real-time table with rank, student name, college, branch, and referral count.
-- Live search filter by name, college, or branch + dropdown college filter.
-- Personal rank highlighting for the active user.
-- Privacy protected (email addresses are never exposed).
-
-### 5. Growth Admin Dashboard (`/admin`)
-- **500 Target Tracker:** Visual progress bar showing `Current / 500`, percentage completed, and remaining.
-- **Budget & CPA Efficiency:** Calculates real-time acquisition cost against industry benchmarks.
-- **Virality K-Factor Analysis:** Computes sharing rate and multiplier.
-- **Interactive Charts (Recharts):**
-  - Daily registration trajectory (Direct vs Referral).
-  - Engineering branch distribution.
-  - Top 10 colleges breakdown table.
-- **Simulation Tools:**
-  - *"Simulate Quick Registration"* modal to test attribution live.
-  - *"Reset Seed"* button to restore benchmark dataset.
-  - *"Export CSV"* to download registration records.
+### Why Students Actually Share
+1. **Placement-grade hook** — They build a real GenAI project for campus interviews
+2. **Peer trust** — A classmate's recommendation converts 5× better than an ad
+3. **Personal stake** — They get tangible rewards (resume reviews, mentorship) for each referral
 
 ---
 
-## 8. Project Screenshots
+## ✨ Key Features
 
-### Workshop Landing Page
-![Workshop Landing Page](screenshots/landing-page.png)
+### 🏠 Workshop Landing Page
+- Student-focused headline with 60-minute AI curriculum breakdown
+- Placement comparison: generic college clone vs. deployed GenAI project
+- Real-time registration ticker + FAQ accordion
+- Single-click jump to registration
 
-### Dedicated Registration & Attribution
-![Dedicated Registration](screenshots/registration.png)
+### 📝 Referral Registration (`/register`)
+- 30-second form: Name, Email, College, Branch, Graduation Year
+- Auto-detects referral code from URL (`?ref=NXT-XXXXX`)
+- Confetti animation on successful registration
+- **Anti-abuse built-in:**
+  - ❌ Duplicate email rejected
+  - ❌ Self-referral blocked
+  - ⚠️ Invalid referral code → degrades gracefully to direct registration
 
-### Student Referral Dashboard
-![Student Referral Dashboard](screenshots/student-dashboard.png)
+### 👤 Student Dashboard (`/dashboard/[code]`)
+- Personal referral code + 1-click copy
+- **WhatsApp share button** with pre-crafted student message
+- Milestone progress tracker:
 
-### Campus Leaderboard
-![Campus Leaderboard](screenshots/leaderboard.png)
+  | Referrals | Reward |
+  |-----------|--------|
+  | 🚀 1 | AI Starter Kit + 50 Prompt Templates |
+  | ⚡ 3 | VIP Discord + AI Resume Checklist |
+  | 🏆 5 | 1-on-1 Portfolio Session + Ambassador Certificate |
+  | 👑 10 | Fast-track NxtWave Internship Referral |
 
-### Growth Admin Dashboard
-![Growth Admin Dashboard](screenshots/admin-dashboard.png)
+- Live list of referred batchmates
+
+### 🏆 Campus Leaderboard (`/leaderboard`)
+- Gold / Silver / Bronze podium cards
+- Live search by name, college, or branch
+- Personal rank highlighted for the active student
+- Email addresses never exposed (privacy-safe)
+
+### 📊 Growth Admin Dashboard (`/admin`)
+- **500-student goal tracker** with progress bar
+- Daily signup chart: Direct vs. Referral breakdown
+- Virality K-Factor and CPA calculated in real-time
+- College and branch distribution charts
+- **Simulate registration** modal for live testing
+- **Export CSV** of all registrations
+- Reset to seed data / Clear all data
 
 ---
 
-## 9. Verification & Testing
-
-The project includes an automated test script (`scripts/test-e2e.js`) covering the entire user journey:
+## ✅ Automated Tests
 
 ```
-=====================================================
 🚀 RUNNING END-TO-END VERIFICATION TESTS
 =====================================================
 
-TEST 1: Check Admin Stats Initial Load
-  ✅ Passed: Loaded 241 seed registrations (Target: 500, Budget: ₹2000)
-
-TEST 2 (Test A): Student 1 Registers Directly
-  ✅ Passed: Student 1 registered! Referral Code generated: NXT-YLCLW
-
-TEST 3: Student 1 Dashboard API
-  ✅ Passed: Student 1 dashboard retrieved. Referral count: 0
-
-TEST 4 (Test B): Student 2 Registers with Referral Code "NXT-YLCLW"
-  ✅ Passed: Referral attributed successfully to Rohan Sharma (NXT-YLCLW)!
-
-TEST 5: Verify Student 1 Referral Count & Milestone Update
-  ✅ Passed: Student 1 now has 1 referral! Unlocked perks: AI Starter Kit
-
-TEST 6 (Test C): Duplicate Email Registration Prevention
-  ✅ Passed: Duplicate registration rejected with clear error message
-
-TEST 7 (Test D): Self-Referral Prevention
-  ✅ Passed: Self-registration blocked properly
-
-TEST 8 (Test E): Invalid Referral Code Handling
-  ✅ Passed: Gracefully handled invalid code with warning message
-
-TEST 9: Campus Leaderboard Ranking Check
-  ✅ Passed: Leaderboard retrieved! Top referrers calculated accurately
+TEST 1: Admin Stats Initial Load               ✅ Passed
+TEST 2: Student 1 Direct Registration          ✅ Passed  → NXT-YLCLW
+TEST 3: Student 1 Dashboard API                ✅ Passed
+TEST 4: Student 2 Registers via NXT-YLCLW      ✅ Passed  → Referral attributed
+TEST 5: Referral Count & Milestone Update      ✅ Passed  → 1 referral, AI Starter Kit unlocked
+TEST 6: Duplicate Email Prevention             ✅ Passed  → Rejected
+TEST 7: Self-Referral Prevention               ✅ Passed  → Blocked
+TEST 8: Invalid Referral Code Handling         ✅ Passed  → Graceful warning
+TEST 9: Leaderboard Ranking Check              ✅ Passed
 
 =====================================================
-SUMMARY: 9 Passed, 0 Failed
+SUMMARY: 9 Passed, 0 Failed ✅
 =====================================================
 ```
 
 ---
 
-## 10. Tech Stack
+## 🛠️ Tech Stack
 
-- **Framework:** [Next.js 14](https://nextjs.org/) (App Router, Server Components & Route Handlers)
-- **Language:** [TypeScript](https://www.typescriptlang.org/)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-- **Charts:** [Recharts](https://recharts.org/)
-- **Icons:** [Lucide React](https://lucide.dev/)
-- **Effects:** [Canvas Confetti](https://www.npmjs.com/package/canvas-confetti)
-- **Storage / Database:** ACID File-based JSON Database (`data/db.json`) with atomic writes and transaction safety
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | Next.js 14 (App Router) |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS |
+| **Charts** | Recharts |
+| **Icons** | Lucide React |
+| **Animations** | Canvas Confetti |
+| **Database (Local)** | JSON file (`data/db.json`) |
+| **Database (Production)** | Upstash Redis (Vercel-compatible) |
+| **Deployment** | Vercel |
 
 ---
 
-## 11. Project Structure
+## 📁 Project Structure
 
 ```
 nxtwave-growth-challenge/
 ├── data/
-│   └── db.json                    # ACID JSON database storage
-├── screenshots/
-│   ├── admin-dashboard.png        # Admin dashboard screenshot
-│   ├── landing-page.png           # Landing page screenshot
-│   ├── leaderboard.png            # Leaderboard screenshot
-│   ├── registration.png           # Registration page screenshot
-│   └── student-dashboard.png      # Student dashboard screenshot
+│   └── db.json                    # Local JSON database
+├── screenshots/                   # App screenshots for README
 ├── scripts/
-│   └── test-e2e.js                # 9-step automated test script
+│   └── test-e2e.js                # 9-step E2E test suite
 ├── src/
 │   ├── app/
-│   │   ├── admin/
-│   │   │   └── page.tsx           # Growth Admin Hub
-│   │   ├── api/
-│   │   │   ├── admin/stats/       # Admin analytics & reset API
-│   │   │   ├── leaderboard/       # Campus leaderboard API
-│   │   │   ├── register/          # Registration & attribution API
-│   │   │   └── student/[code]/    # Student profile & referrals API
-│   │   ├── dashboard/
-│   │   │   ├── [code]/page.tsx    # Student referral dashboard
-│   │   │   └── page.tsx           # Dashboard lookup page
-│   │   ├── leaderboard/
-│   │   │   └── page.tsx           # Campus leaderboard with podium
-│   │   ├── register/
-│   │   │   └── page.tsx           # Dedicated referral registration
-│   │   ├── globals.css            # Dark theme styling & utility classes
-│   │   ├── layout.tsx             # Root layout with Navbar and Footer
-│   │   └── page.tsx               # Workshop landing page
+│   │   ├── page.tsx               # 🏠 Workshop landing page
+│   │   ├── register/page.tsx      # 📝 Registration + referral attribution
+│   │   ├── dashboard/[code]/      # 👤 Student referral dashboard
+│   │   ├── leaderboard/page.tsx   # 🏆 Campus leaderboard
+│   │   ├── admin/page.tsx         # 📊 Growth admin hub
+│   │   └── api/
+│   │       ├── register/          # POST: Register student
+│   │       ├── student/[code]/    # GET: Student profile + referrals
+│   │       ├── leaderboard/       # GET: Ranked leaderboard
+│   │       └── admin/stats/       # GET/POST: Stats + reset/clear
 │   ├── components/
-│   │   ├── Footer.tsx             # Global footer
-│   │   ├── GrowthLoopExplainer.tsx # 4-step referral loop diagram
-│   │   ├── MilestonesCard.tsx     # Milestone progress bar & perk cards
-│   │   ├── Navbar.tsx             # Navbar with student dashboard lookup
-│   │   ├── RegistrationForm.tsx   # Registration form with validation
-│   │   └── WorkshopRoadmap.tsx    # 60-minute practical AI curriculum
+│   │   ├── Navbar.tsx
+│   │   ├── RegistrationForm.tsx
+│   │   ├── MilestonesCard.tsx
+│   │   ├── GrowthLoopExplainer.tsx
+│   │   └── WorkshopRoadmap.tsx
 │   ├── lib/
-│   │   ├── constants.ts           # Workshop details, FAQ, colleges, milestones
-│   │   └── db.ts                  # Database abstraction & seed generator
-│   └── types/
-│       └── index.ts               # TypeScript data models & types
-├── next.config.mjs                # Next.js configuration
-├── package.json                   # Dependencies and scripts
-├── tailwind.config.ts             # Tailwind CSS configuration
-└── tsconfig.json                  # TypeScript compiler configuration
+│   │   ├── db.ts                  # DB abstraction (Redis + JSON fallback)
+│   │   └── constants.ts           # Config, FAQ, milestones
+│   └── types/index.ts             # TypeScript interfaces
+├── next.config.mjs
+├── tailwind.config.ts
+└── tsconfig.json
 ```
 
 ---
 
-## 12. Future Improvements
+## 🔧 Environment Variables (for Production)
 
-1. **WhatsApp Cloud API Integration:** Automated WhatsApp delivery of workshop meeting links and reminders immediately upon registration.
-2. **Inter-College Ambassador Competitions:** College-vs-college referral tournaments where the top engineering campus wins a sponsored AI hackathon.
-3. **Automated Calendar Invites:** 1-click Google Calendar & Outlook `.ics` event generation to maximize live workshop attendance rate.
-4. **Post-Workshop Certificate Verification:** Public certificate verification page (`/verify/[certificateId]`) for students to display on LinkedIn.
+For persistent data on Vercel, add these in **Vercel → Settings → Environment Variables**:
+
+```env
+UPSTASH_REDIS_REST_URL=your_url_here
+UPSTASH_REDIS_REST_TOKEN=your_token_here
+```
+
+Get them free at **[console.upstash.com](https://console.upstash.com)** → Create Database → REST API tab.
+
+> Without these, the app still works using `/tmp` storage (ephemeral, resets on cold start).
 
 ---
 
-## 13. Conclusion
+## 🚀 Future Improvements
 
-This project demonstrates how a product-led growth strategy combined with a placement-oriented value proposition can acquire **500 final-year engineering students within 7 days on a ₹2,000 budget**. By aligning student incentives (resume reviews, starter code, and mentorship) with peer sharing, registrations scale organically without high paid ad costs.
+1. **WhatsApp Cloud API** — Auto-send workshop links and reminders on registration
+2. **Inter-College Tournaments** — Campus vs campus referral competitions
+3. **Google Calendar Integration** — 1-click event generation to maximize attendance
+4. **LinkedIn Certificate Verification** — Public `/verify/[id]` page for placement portfolios
+5. **SMS OTP Verification** — Reduce fake registrations further
+
+---
+
+## 💡 Conclusion
+
+This project shows how a **product-led growth strategy** with the right student incentives can:
+
+- Reach **500 engineering students in 7 days**
+- Spend **₹2,000 instead of ₹70,000**
+- Achieve **96% cost savings** over paid advertising
+- Generate organic word-of-mouth through placement-relevant perks
+
+The referral loop works because the workshop solves a real student problem (placement prep), making every registered student genuinely motivated to bring their batchmates along.
+
+---
+
+<div align="center">
+
+Built with ❤️ for the **NxtWave Growth Intern Challenge**
+
+**[🌐 Live Demo](https://nxtwave-growth-challenge-amber.vercel.app/) · [⭐ Star this repo](https://github.com/Sriramnischay/nxtwave-growth-challenge)**
+
+</div>
